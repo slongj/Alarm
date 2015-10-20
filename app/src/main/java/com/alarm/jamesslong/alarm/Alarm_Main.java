@@ -17,6 +17,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 
@@ -25,6 +30,8 @@ public class Alarm_Main extends AppCompatActivity {
     ListView listView = null;
     AlarmAdapter alarmAdapter = null;
     JSON_Write json_write = null;
+    File file = null;
+    OutputStream outputStream = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +42,18 @@ public class Alarm_Main extends AppCompatActivity {
         listOfAlarms = new ArrayList();
         json_write = new JSON_Write();
 
-        json_write.writeAlarmToJSON(this, listOfAlarms);
+        try {
+            file = new File(getApplicationContext().getFilesDir(), "Alarms.json");
+            outputStream = new FileOutputStream(file, false);
+            json_write.writeAlarmToJSON(outputStream, listOfAlarms);
 //        JSON_Read.readFromJSON(this, listOfAlarms);
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
 
         alarmAdapter = new AlarmAdapter(getApplicationContext(), listOfAlarms);
         listView.setAdapter(alarmAdapter);
