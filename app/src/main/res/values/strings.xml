@@ -7,4 +7,23 @@
     <string name="title_activity_add__alarm">Add_Alarm</string>
     <string name="add_alarm_alarm_name">Alarm Name</string>
     <string name="add_alarm_alarm_dates">Alarm Dates</string>
+
+    <string-array name="days_of_week_short">
+        <item>S</item>
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+    </string-array>
+    <string-array name="days_of_week">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
 </resources>

@@ -1,5 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<android.support.design.widget.CoordinatorLayout-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/alarm_main_page"
     android:name="com.alarm.jamesslong.alarm.Alarm_MainFragment"
     android:layout_width="match_parent"
@@ -12,18 +15,16 @@
         android:layout_height="match_parent">
     </ListView>
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/addAlarm"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="end|center"-->
-        <!--android:text="+">-->
-    <!--</android.support.design.widget.FloatingActionButton>-->
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addAlarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom" />
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        app:backgroundTint="@color/android_red"
+        app:fabSize="normal"
+        android:src="@drawable/ic_alarm_plus_white_36dp"/>
 
+<!--</android.support.design.widget.CoordinatorLayout>-->
 </RelativeLayout>
