@@ -15,11 +15,48 @@ public class JSON_Write {
 
     }
 
+
     public void writeAlarmToJSON(OutputStream out, ArrayList<AlarmObject> listOfAlarms) throws IOException{
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
         writer.setIndent("   ");
         int sizeCount = 0;
+
+        writer.beginObject();
+            writer.name("alarms");
+            writer.beginArray();
+            for(AlarmObject alarm : listOfAlarms){
+                writeAlarm(writer, alarm);
+                sizeCount++;
+            }
+            writer.endArray();
+            writer.name("size").value(sizeCount);
+        writer.endObject();
+        writer.close();
     }
+
+
+    public void writeAlarm(JsonWriter writer, AlarmObject alarm) throws IOException{
+        writer.beginObject();
+        writer.name("alarmEnable").value(alarm.alarmEnable);
+        writer.name("alarmName").value(alarm.alarmName);
+        writer.name("alarmTime").value(alarm.alarmTime);
+        writer.name("alarmMath").value(alarm.alarmMath);
+        writer.name("alarmVibrate").value(alarm.alarmVibrate);
+        writer.name("alarmTone").value(alarm.alarmTone.toString());
+        writeAlarmDays(writer, alarm.daysOfWeek);
+        writer.endObject();
+    }
+
+
+    public void writeAlarmDays(JsonWriter writer, String[] daysOfWeek) throws IOException{
+        writer.name("daysOfWeek");
+        writer.beginArray();
+        for(String day : daysOfWeek){
+            writer.value(day);
+        }
+        writer.endArray();
+    }
+
 
 //    public static void writeToJSON(Context context, ArrayList<AlarmObject> listOfAlarms){
 //        Resources resources = context.getResources();

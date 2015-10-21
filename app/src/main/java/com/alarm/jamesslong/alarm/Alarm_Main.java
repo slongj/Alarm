@@ -18,20 +18,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 public class Alarm_Main extends AppCompatActivity {
+    static boolean DEBUG = false;
     ArrayList<AlarmObject> listOfAlarms = null;
     ListView listView = null;
     AlarmAdapter alarmAdapter = null;
     JSON_Write json_write = null;
+    JSON_Read json_read = null;
     File file = null;
     OutputStream outputStream = null;
+    InputStream inputStream = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +47,6 @@ public class Alarm_Main extends AppCompatActivity {
         setContentView(R.layout.activity_alarm_main);
         listView = (ListView) findViewById(R.id.alarmList);
         listOfAlarms = new ArrayList();
-        json_write = new JSON_Write();
-
-        try {
-            file = new File(getApplicationContext().getFilesDir(), "Alarms.json");
-            outputStream = new FileOutputStream(file, false);
-            json_write.writeAlarmToJSON(outputStream, listOfAlarms);
-//        JSON_Read.readFromJSON(this, listOfAlarms);
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
 
         alarmAdapter = new AlarmAdapter(getApplicationContext(), listOfAlarms);
         listView.setAdapter(alarmAdapter);
@@ -69,10 +62,21 @@ public class Alarm_Main extends AppCompatActivity {
         addAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAlarm();
+                addAlarmToList();
+                if(DEBUG) {
+                    writeToJson();
+                }
+                alarmAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "Add Alarm", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        if(DEBUG){
+            writeToJson();
+            readFromJson();
+        }
+        alarmAdapter.notifyDataSetChanged();
     }
 
 
@@ -86,13 +90,48 @@ public class Alarm_Main extends AppCompatActivity {
     }
 
 
-    public void addAlarm(){
+    public void addAlarmToList(){
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        //c.setTimeInMillis(System.currentTimeMillis());
+
         AlarmObject alarmObject = new AlarmObject();
-        alarmObject.alarmTime = "08:9"+'9';
         alarmObject.alarmEnable = true;
-        alarmObject.daysOfWeek.add("Sat");
+        alarmObject.alarmName = "";
+        alarmObject.alarmTime = sdf.format(c.getTime());
+        alarmObject.alarmMath = true;
+        alarmObject.alarmVibrate = true;
+        alarmObject.alarmTone = getFilesDir();
+        alarmObject.daysOfWeek[c.get(Calendar.DAY_OF_WEEK) - 1] = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
         listOfAlarms.add(alarmObject);
     }
+
+
+    public void writeToJson(){
+        json_write = new JSON_Write();
+        try {
+            file = new File(getApplicationContext().getFilesDir(), "Alarms.json");
+            outputStream = new FileOutputStream(file, false);
+            json_write.writeAlarmToJSON(outputStream, listOfAlarms);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void readFromJson(){
+        json_read = new JSON_Read();
+        try {
+            file = new File(getApplicationContext().getFilesDir(), "Alarms.json");
+            inputStream = new FileInputStream(file);
+            listOfAlarms = json_read.readAlarmsFromJSON(inputStream);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
 
     public class AlarmAdapter extends ArrayAdapter<AlarmObject> {
         public AlarmAdapter(Context context, ArrayList<AlarmObject> alarms){
@@ -120,10 +159,9 @@ public class Alarm_Main extends AppCompatActivity {
             }
             alarm_time.setText(alarm.alarmTime);
             alarm_enable.setChecked(alarm.alarmEnable);
-            for(int i = 0; i < (alarm.daysOfWeek.size() - 1); i++){
-                daysSelected += alarm.daysOfWeek.get(i) + ",";
+            for(int i = 0; i < (alarm.daysOfWeek.length); i++){
+                daysSelected += alarm.daysOfWeek[i] + " ";
             }
-            daysSelected += alarm.daysOfWeek.get(alarm.daysOfWeek.size() - 1);
             alarm_days_of_week.setText(daysSelected);
 
             return convertView;
