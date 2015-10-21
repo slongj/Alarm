@@ -2,6 +2,7 @@ package com.alarm.jamesslong.alarm;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -85,7 +86,7 @@ public class Alarm_Main extends AppCompatActivity {
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if(currentAPIVersion >=Build.VERSION_CODES.LOLLIPOP){
             Window w = getWindow();
-            w.setStatusBarColor(getResources().getColor(R.color.android_dark_purple));
+            w.setStatusBarColor(getResources().getColor(R.color.android_dark_blue));
         }
     }
 
@@ -103,7 +104,9 @@ public class Alarm_Main extends AppCompatActivity {
         alarmObject.alarmVibrate = true;
         alarmObject.alarmTone = getFilesDir();
         alarmObject.daysOfWeek[c.get(Calendar.DAY_OF_WEEK) - 1] = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
-        listOfAlarms.add(alarmObject);
+        if(listOfAlarms != null) {
+            listOfAlarms.add(alarmObject);
+        }
     }
 
 
@@ -140,7 +143,7 @@ public class Alarm_Main extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent){
-            AlarmObject alarm = getItem(position);
+            final AlarmObject alarm = getItem(position);
             String daysSelected = "";
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.alarm_object_main, parent, false);
@@ -148,22 +151,33 @@ public class Alarm_Main extends AppCompatActivity {
 
             TextView alarm_name = (TextView) convertView.findViewById(R.id.alarm_name);
             TextView alarm_time = (TextView) convertView.findViewById(R.id.alarm_time);
-            Switch alarm_enable = (Switch) convertView.findViewById(R.id.alarm_enable);
+            final Switch alarm_enable = (Switch) convertView.findViewById(R.id.alarm_enable);
             TextView alarm_days_of_week = (TextView) convertView.findViewById(R.id.alarm_days_of_week);
+            Typeface tf = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
 
-            if(alarm.alarmName != null) {
-                alarm_name.setText(alarm.alarmName);
-            }
-            else{
+            alarm_enable.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alarm.alarmEnable = alarm_enable.isChecked();
+                }
+            });
+
+
+            if(alarm.alarmName.isEmpty()) {
                 alarm_name.setVisibility(View.GONE);
             }
+            else{
+                alarm_name.setText(alarm.alarmName);
+            }
             alarm_time.setText(alarm.alarmTime);
+            alarm_time.setTypeface(tf);
             alarm_enable.setChecked(alarm.alarmEnable);
             for(int i = 0; i < (alarm.daysOfWeek.length); i++){
-                daysSelected += alarm.daysOfWeek[i] + " ";
+                if(alarm.daysOfWeek[i] != null) {
+                    daysSelected += alarm.daysOfWeek[i] + " ";
+                }
             }
             alarm_days_of_week.setText(daysSelected);
-
             return convertView;
         }
     }

@@ -18,15 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Add_Alarm"
-            android:label="@string/title_activity_add__alarm"
-            android:theme="@android:style/Theme.Holo.NoActionBar"
-            android:parentActivityName=".Alarm_Main" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.alarm.jamesslong.alarm.Alarm_Main" />
-        </activity>
     </application>
 
 </manifest>

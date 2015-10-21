@@ -7,12 +7,14 @@
     android:name="com.alarm.jamesslong.alarm.Alarm_MainFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/android_purple">
+    android:background="@color/android_blue">
 
     <ListView
         android:id="@+id/alarmList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:divider="@color/transparent_white"
+        android:dividerHeight="@dimen/divider_size">
     </ListView>
 
     <android.support.design.widget.FloatingActionButton
