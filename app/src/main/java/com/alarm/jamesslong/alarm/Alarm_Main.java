@@ -13,7 +13,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.GridLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +35,7 @@ import java.util.Locale;
 
 
 public class Alarm_Main extends AppCompatActivity {
-    static boolean DEBUG = false;
+    static boolean DEBUG = true;
     ArrayList<AlarmObject> listOfAlarms = null;
     ListView listView = null;
     AlarmAdapter alarmAdapter = null;
@@ -46,32 +50,31 @@ public class Alarm_Main extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setStatusBarColor();
         setContentView(R.layout.activity_alarm_main);
+        init();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(listOfAlarms == null){
+            init();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void init() {
         listView = (ListView) findViewById(R.id.alarmList);
         listOfAlarms = new ArrayList();
+        FloatingActionButton addAlarmButton = (FloatingActionButton) findViewById(R.id.addAlarm);
 
         alarmAdapter = new AlarmAdapter(getApplicationContext(), listOfAlarms);
         listView.setAdapter(alarmAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlarmObject alarm = listOfAlarms.get(position);
-                Toast.makeText(getApplicationContext(), "Alarm Name: " + alarm.alarmTime, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        FloatingActionButton addAlarmButton = (FloatingActionButton) findViewById(R.id.addAlarm);
-        addAlarmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addAlarmToList();
-                if(DEBUG) {
-                    writeToJson();
-                }
-                alarmAdapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "Add Alarm", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        listView.setOnItemClickListener(expandDetails);
+        addAlarmButton.setOnClickListener(addAlarm);
 
         if(DEBUG){
             writeToJson();
@@ -91,6 +94,85 @@ public class Alarm_Main extends AppCompatActivity {
     }
 
 
+    AdapterView.OnItemClickListener expandDetails = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            final AlarmObject alarm = listOfAlarms.get(position);
+            RelativeLayout detailPanel = (RelativeLayout) view.findViewById(R.id.detailPanel);
+            RelativeLayout simplePanel = (RelativeLayout) view.findViewById(R.id.simplePanel);
+
+            switch (detailPanel.getVisibility()) {
+                case View.VISIBLE:
+                    detailPanel.setVisibility(View.GONE);
+                    simplePanel.setVisibility(View.VISIBLE);
+                    break;
+                case View.GONE:
+                    detailPanel.setVisibility(View.VISIBLE);
+                    simplePanel.setVisibility(View.GONE);
+                    final CheckBox alarmRepeatCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_repeat);
+                    final CheckBox alarmMathCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_math);
+                    final GridLayout alarmDaysOfWeekSelector = (GridLayout) detailPanel.findViewById(R.id.alarm_days_of_week_selector);
+                    final TextView alarmToneTextView = (TextView) detailPanel.findViewById(R.id.alarm_tone);
+                    final CheckBox alarmVibrateCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_vibrate);
+
+//                    for(int i = 0; i < 7; i++){
+//                        TextView textview = new TextView();
+//                    }
+//                    alarmDaysOfWeekSelector.addView();
+
+                    alarmRepeatCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            alarm.alarmRepeat = isChecked;
+                            if (DEBUG) {
+                                writeToJson();
+                            }
+                            Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmRepeatCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    alarmMathCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            alarm.alarmMath = isChecked;
+                            if (DEBUG) {
+                                writeToJson();
+                            }
+                            Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmMathCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    alarmVibrateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            alarm.alarmVibrate = isChecked;
+                            if (DEBUG) {
+                                writeToJson();
+                            }
+                            Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmVibrateCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+            }
+
+//                 Toast.makeText(getApplicationContext(), "Alarm Name: " + alarm.alarmTime, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+    View.OnClickListener addAlarm = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            addAlarmToList();
+            if(DEBUG) {
+                writeToJson();
+            }
+            alarmAdapter.notifyDataSetChanged();
+            Toast.makeText(getApplicationContext(), "Add Alarm", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
     public void addAlarmToList(){
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
@@ -100,6 +182,7 @@ public class Alarm_Main extends AppCompatActivity {
         alarmObject.alarmEnable = true;
         alarmObject.alarmName = "";
         alarmObject.alarmTime = sdf.format(c.getTime());
+        alarmObject.alarmRepeat = true;
         alarmObject.alarmMath = true;
         alarmObject.alarmVibrate = true;
         alarmObject.alarmTone = getFilesDir();
@@ -128,7 +211,10 @@ public class Alarm_Main extends AppCompatActivity {
         try {
             file = new File(getApplicationContext().getFilesDir(), "Alarms.json");
             inputStream = new FileInputStream(file);
-            listOfAlarms = json_read.readAlarmsFromJSON(inputStream);
+            listOfAlarms.clear();
+            for(AlarmObject alarm : json_read.readAlarmsFromJSON(inputStream)) {
+                listOfAlarms.add(alarm);
+            }
         }
         catch(IOException e){
             e.printStackTrace();
@@ -159,6 +245,7 @@ public class Alarm_Main extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     alarm.alarmEnable = alarm_enable.isChecked();
+                    writeToJson();
                 }
             });
 

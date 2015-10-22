@@ -7,6 +7,8 @@
     <string name="title_activity_add__alarm">Add_Alarm</string>
     <string name="add_alarm_alarm_name">Alarm Name</string>
     <string name="add_alarm_alarm_dates">Alarm Dates</string>
+    <string name="add_alarm_alarm_repeat">Repeat</string>
+    <string name="add_alarm_alarm_math">Math</string>
 
     <string-array name="days_of_week_short">
         <item>S</item>

@@ -40,6 +40,7 @@ public class JSON_Write {
         writer.name("alarmEnable").value(alarm.alarmEnable);
         writer.name("alarmName").value(alarm.alarmName);
         writer.name("alarmTime").value(alarm.alarmTime);
+        writer.name("alarmRepeat").value(alarm.alarmRepeat);
         writer.name("alarmMath").value(alarm.alarmMath);
         writer.name("alarmVibrate").value(alarm.alarmVibrate);
         writer.name("alarmTone").value(alarm.alarmTone.toString());

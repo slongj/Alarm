@@ -69,6 +69,9 @@ public class JSON_Read {
                 case "alarmTime":
                     alarm.alarmTime = reader.nextString();
                     break;
+                case "alarmRepeat":
+                    alarm.alarmRepeat = reader.nextBoolean();
+                    break;
                 case "alarmMath":
                     alarm.alarmMath = reader.nextBoolean();
                     break;

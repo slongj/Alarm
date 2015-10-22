@@ -9,6 +9,7 @@ public class AlarmObject {
     Boolean alarmEnable = true;
     String alarmName = null;
     String alarmTime = null;
+    Boolean alarmRepeat = false;
     Boolean alarmMath = false;
     Boolean alarmVibrate = false;
     File alarmTone = null;
