@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:grid="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -99,102 +100,105 @@
 
             </RelativeLayout>
 
+            <!--<GridLayout-->
+                <!--android:id="@+id/alarm_days_of_week_selector"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@id/alarm_options_row"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:padding="@dimen/activity_horizontal_margin_small"-->
+                <!--android:alignmentMode="alignBounds"-->
+                <!--android:columnCount="7"-->
+                <!--android:rowOrderPreserved="false"-->
+                <!--android:useDefaultMargins="true"-->
+                <!--android:orientation="horizontal">-->
+
             <GridLayout
                 android:id="@+id/alarm_days_of_week_selector"
+                android:rowCount="7"
+                android:fitsSystemWindows="true"
+                android:alignmentMode="alignBounds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/alarm_options_row"
-                android:layout_centerHorizontal="true"
-                android:padding="@dimen/activity_horizontal_margin_small"
-                android:alignmentMode="alignBounds"
-                android:columnCount="7"
-                android:rowOrderPreserved="false"
-                android:useDefaultMargins="true">
+                android:layout_below="@id/alarm_options_row">
 
                 <TextView
                     android:id="@+id/alarm_sunday"
-                    android:text="S"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
+                    android:text="S"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
-                    android:textColor="@color/android_blue"
-                    android:background="@drawable/round_button"/>
+                    android:clickable="true"/>
                 <TextView
                     android:id="@+id/alarm_monday"
-                    android:text="M"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+                    android:text="M"
                     android:textColor="@color/white"
-                    android:background="@color/black"/>
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:clickable="true"/>
                 <TextView
                     android:id="@+id/alarm_tuesday"
-                    android:text="T"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+                    android:text="T"
                     android:textColor="@color/white"
-                    android:background="@color/black"/>
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:clickable="true"/>
                 <TextView
                     android:id="@+id/alarm_wednesday"
-                    android:text="W"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+                    android:text="W"
                     android:textColor="@color/white"
-                    android:background="@color/black"/>
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:clickable="true"/>
                 <TextView
                     android:id="@+id/alarm_thursday"
-                    android:text="T"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+                    android:text="T"
                     android:textColor="@color/white"
-                    android:background="@color/black"/>
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:clickable="true"/>
                 <TextView
                     android:id="@+id/alarm_friday"
-                    android:text="F"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+                    android:text="F"
                     android:textColor="@color/white"
-                    android:background="@color/black"/>
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:clickable="true"/>
                 <TextView
                     android:id="@+id/alarm_saturday"
-                    android:text="S"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:gravity="center"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+                    android:text="S"
                     android:textColor="@color/white"
-                    android:background="@color/black"/>
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:clickable="true"/>
 
             </GridLayout>
 
@@ -257,7 +261,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/alarm_name"

@@ -2,6 +2,7 @@ package com.alarm.jamesslong.alarm;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ public class Alarm_Main extends AppCompatActivity {
     File file = null;
     OutputStream outputStream = null;
     InputStream inputStream = null;
- 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,13 +74,13 @@ public class Alarm_Main extends AppCompatActivity {
 
         alarmAdapter = new AlarmAdapter(getApplicationContext(), listOfAlarms);
         listView.setAdapter(alarmAdapter);
-        listView.setOnItemClickListener(expandDetails);
+        listView.setOnItemClickListener(toggleBottomPanel);
         addAlarmButton.setOnClickListener(addAlarm);
 
-        if(DEBUG){
+        if(DEBUG) {
             writeToJson();
-            readFromJson();
         }
+        readFromJson();
         alarmAdapter.notifyDataSetChanged();
     }
 
@@ -94,79 +95,184 @@ public class Alarm_Main extends AppCompatActivity {
     }
 
 
-    AdapterView.OnItemClickListener expandDetails = new AdapterView.OnItemClickListener() {
+    AdapterView.OnItemClickListener toggleBottomPanel = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
             final AlarmObject alarm = listOfAlarms.get(position);
             RelativeLayout detailPanel = (RelativeLayout) view.findViewById(R.id.detailPanel);
             RelativeLayout simplePanel = (RelativeLayout) view.findViewById(R.id.simplePanel);
 
-            switch (detailPanel.getVisibility()) {
-                case View.VISIBLE:
-                    detailPanel.setVisibility(View.GONE);
-                    simplePanel.setVisibility(View.VISIBLE);
-                    break;
-                case View.GONE:
-                    detailPanel.setVisibility(View.VISIBLE);
-                    simplePanel.setVisibility(View.GONE);
-                    final CheckBox alarmRepeatCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_repeat);
-                    final CheckBox alarmMathCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_math);
-                    final GridLayout alarmDaysOfWeekSelector = (GridLayout) detailPanel.findViewById(R.id.alarm_days_of_week_selector);
-                    final TextView alarmToneTextView = (TextView) detailPanel.findViewById(R.id.alarm_tone);
-                    final CheckBox alarmVibrateCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_vibrate);
-
-//                    for(int i = 0; i < 7; i++){
-//                        TextView textview = new TextView();
-//                    }
-//                    alarmDaysOfWeekSelector.addView();
-
-                    alarmRepeatCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            alarm.alarmRepeat = isChecked;
-                            if (DEBUG) {
-                                writeToJson();
-                            }
-                            Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmRepeatCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    alarmMathCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            alarm.alarmMath = isChecked;
-                            if (DEBUG) {
-                                writeToJson();
-                            }
-                            Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmMathCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    alarmVibrateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            alarm.alarmVibrate = isChecked;
-                            if (DEBUG) {
-                                writeToJson();
-                            }
-                            Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmVibrateCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    break;
-            }
+            toggleDetailPanel(alarm, position, detailPanel, simplePanel);
 
 //                 Toast.makeText(getApplicationContext(), "Alarm Name: " + alarm.alarmTime, Toast.LENGTH_SHORT).show();
         }
     };
+
+    public void toggleDetailPanel(final AlarmObject alarm, final int position, RelativeLayout detailPanel, RelativeLayout simplePanel){
+        final Resources resources = getResources();
+        switch (detailPanel.getVisibility()) {
+            case View.VISIBLE:
+                detailPanel.setVisibility(View.GONE);
+                simplePanel.setVisibility(View.VISIBLE);
+                break;
+            case View.GONE:
+                detailPanel.setVisibility(View.VISIBLE);
+                simplePanel.setVisibility(View.GONE);
+                final CheckBox alarmRepeatCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_repeat);
+                final CheckBox alarmMathCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_math);
+                final GridLayout alarmDaysOfWeekSelector = (GridLayout) detailPanel.findViewById(R.id.alarm_days_of_week_selector);
+                final TextView alarmToneTextView = (TextView) detailPanel.findViewById(R.id.alarm_tone);
+                final CheckBox alarmVibrateCheckBox = (CheckBox) detailPanel.findViewById(R.id.alarm_vibrate);
+
+                alarmRepeatCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        alarm.alarmRepeat = isChecked;
+                        writeToJson();
+                        Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmRepeatCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alarmMathCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        alarm.alarmMath = isChecked;
+                        writeToJson();
+                        Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmMathCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                for(int i = 0; i < alarmDaysOfWeekSelector.getChildCount(); i++){
+                    TextView day = (TextView) alarmDaysOfWeekSelector.getChildAt(i);
+                    day.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            TextView tv = (TextView) v;
+                            switch(tv.getId()){
+                                case R.id.alarm_sunday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Sun";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                                case R.id.alarm_monday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Mon";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                                case R.id.alarm_tuesday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Tue";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                                case R.id.alarm_wednesday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Wed";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                                case R.id.alarm_thursday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Thu";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                                case R.id.alarm_friday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Fri";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                                case R.id.alarm_saturday:
+                                    if(tv.getCurrentTextColor() == resources.getColor(R.color.white)){
+                                        //unselected to selected
+                                        alarm.daysOfWeek[0] = "Sat";
+                                        tv.setTextColor(resources.getColor(R.color.android_dark_blue));
+                                        tv.setBackgroundColor(resources.getColor(R.color.black));
+                                    }
+                                    else{
+                                        //selected to unselected
+                                        alarm.daysOfWeek[0] = null;
+                                        tv.setTextColor(resources.getColor(R.color.white));
+                                        tv.setBackgroundColor(resources.getColor(R.color.transparent));
+                                    }
+                                    break;
+                            }
+                            writeToJson();
+                        }
+                    });
+//                        TextView textview = new TextView();
+//                        alarmDaysOfWeekSelector.addView();
+                }
+
+                alarmVibrateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        alarm.alarmVibrate = isChecked;
+                        writeToJson();
+                        Toast.makeText(getApplicationContext(), "Alarm Pos:" + position + " is checked:" + alarmVibrateCheckBox.isChecked(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+        }
+    }
 
 
     View.OnClickListener addAlarm = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             addAlarmToList();
-            if(DEBUG) {
-                writeToJson();
-            }
+            writeToJson();
             alarmAdapter.notifyDataSetChanged();
             Toast.makeText(getApplicationContext(), "Add Alarm", Toast.LENGTH_SHORT).show();
         }

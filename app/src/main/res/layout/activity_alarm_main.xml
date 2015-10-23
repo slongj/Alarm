@@ -1,7 +1,6 @@
 <!--<android.support.design.widget.CoordinatorLayout-->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/alarm_main_page"
     android:name="com.alarm.jamesslong.alarm.Alarm_MainFragment"
