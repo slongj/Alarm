@@ -1,6 +1,7 @@
 package com.alarm.jamesslong.alarm;
 
 import android.util.JsonReader;
+import android.util.JsonToken;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class JSON_Read {
                 case "daysOfWeek":
                     alarm.daysOfWeek = readAlarmDays(reader);
                     break;
+                default:
+                    reader.skipValue();
             }
         }
         reader.endObject();
@@ -95,8 +98,14 @@ public class JSON_Read {
         String[] daysOfWeek = new String[7];
         reader.beginArray();
         for(int i = 0; i < 7; i++){
-            daysOfWeek[i] = reader.nextString();
+            if(reader.peek() != JsonToken.NULL) {
+                daysOfWeek[i] = reader.nextString();
+            }
+            else{
+                reader.skipValue();
+            }
         }
+        reader.endArray();
         return daysOfWeek;
     }
 }
