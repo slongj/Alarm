@@ -287,7 +287,7 @@ public class Alarm_Main extends AppCompatActivity {
 
 
     public void addAlarmToList(){
-        DialogFragment timeDialog = new Dialog_AddAlarm_TimePicker_1();
+        DialogFragment timeDialog = new Dialog_AddAlarm_TimePicker();
         timeDialog.show(getFragmentManager(), "timePicker");
 
 
